@@ -1,0 +1,21 @@
+{
+  "name": "arelamsfortnitebot",
+  "version": "1.0.1",
+  "description": "Discord Fortnite Stats Tracker",
+  "main": "fbot.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "Discord",
+    "Fortnite",
+    "stats",
+    "bot"
+  ],
+  "author": "Arelam",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.2.1"
+  },
+  "devDependencies": {}
+}
