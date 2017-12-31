@@ -112,3 +112,25 @@ function fillTemplate(){
         }).catch(console.error);
     }
 }
+
+/*https://api.partybus.gg/v1/players/lookup/"*/
+
+/*function getUserData(){
+    if (targetSearch) {
+        https.get("https://api.partybus.gg/v1/players/" + encodeURI(targetSearch.toLowerCase()), function(resp){
+            resp.setEncoding('utf8');
+            resp.on('data', function(chunk){
+                var res = JSON.parse(chunk);
+                if (!res.message) {
+                    playerStats = res.stats;
+                    playerStats.details = res.details;
+                    fillTemplate();
+                } else {
+                    message.channel.send(res.message).catch(console.error);
+                }
+            });
+        }).on("error", function(e){
+            console.log("Got error: " + e.message);
+        });
+    }
+}*/
