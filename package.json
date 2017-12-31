@@ -15,9 +15,11 @@
   "author": "Arelam",
   "license": "ISC",
   "dependencies": {
+    "assert": "^1.4.1",
+    "electron": "^1.7.10",
     "discord.js": "^11.2.1",
+    "fortnite-api": "^2.1.6",
     "https": "^1.0.0",
-    "jimp": "^0.2.28",
     "randomcolor": "^0.5.3"
   },
   "devDependencies": {}

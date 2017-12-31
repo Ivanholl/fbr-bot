@@ -1,0 +1,7 @@
+body {
+    background: url('./pics/background-purple-smaller.jpg') no-repeat;
+    background-size: 150% auto;
+}
+.dark-blue {
+    background-color: rgba(31, 53, 87, 1);
+}
