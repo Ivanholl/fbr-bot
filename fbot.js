@@ -118,9 +118,9 @@ function getServerStatus(){
     fortniteAPI.checkFortniteStatus()
         .then((serverStatus) => {
             if (serverStatus) {
-                message.channel.send('Fortnite Servers are Online').catch(console.error)
+                message.channel.send('```Fortnite Servers are Online```').catch(console.error)
             } else {
-                message.channel.send('Fortnite Servers are Offline').catch(console.error)
+                message.channel.send('```Fortnite Servers are Offline```').catch(console.error)
             }
         })
         .catch((err) => {
@@ -322,11 +322,11 @@ function dropMe(){
         while (randLoc1 == randLoc2){
             var randLoc2 = locations[Math.floor(Math.random()* locations.length)];
         }
-        return "между ***" + randLoc1 + "*** и ***" + randLoc2 + "***";
+        return "```Скочи между ***" + randLoc1 + "*** и ***" + randLoc2 + "***```";
     }
     else // otherwise give map location
     {
         var randLoc = locations[Math.floor(Math.random()* locations.length)];
-        return "**" + randLoc + "**";
+        return "```Скочи в ***" + randLoc + "***```";
     }
 }
