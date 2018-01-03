@@ -1,17 +1,76 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
-        <title></title>
-        <style media="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"></style>
-        <style media="screen" href="css/styles.css"></style>
-
-        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="css\styles.css"></link>
     </head>
     <body>
-        <div class="container dark-blue">
-
+        <div class="background-purple dark-blue">
+            <div class="col-3">
+                        <h3 class="blue">' + news[i].title + '</h3>
+                        <p> + news[i].body + '</p>
+                        <img src=https://cdn2.unrealengine.com/Fortnite%2FMODT-SMG-centered-256x256-089a9b5543e9c0dd81c8ae7532b2474340526fa2.png>
+                    </div>
         </div>
 
     </body>
-</html>
+</html> -->
+<style media="screen">
+
+*{box-sizing: border-box;}
+.container{width:1024px;height:768px;position:relative;overflow: hidden;}
+.relative{position:relative;width: 2188;height: 850;}
+.absolute{position:absolute;}
+.whiteText {color: white;}
+.whiteBg {background: rgba(255,255,255,0.3);}
+
+.fl-right{float:right;}
+.max-size{width:100%;height:100%;}
+.max-width{width:100%;}
+.super-size{width: 200%;}
+.half-size{width:50%;height:50%;}
+
+.news{text-align: center;position: absolute;top: -10px;}
+.map{width:850px;height:850px;}
+.marker{width:30px;height:30px;margin-top:-15px;margin-left:-15px;}
+.scheenshot{width: 1512px;height: 850px;}
+
+.col-50{width: 50%;display: inline-block;}
+.col-50 h1{font-size: 40px;text-transform: uppercase;}
+.col-50 p{font-weight: 700;font-size:22px;}
+.col-29{width:30%; padding:0 20px; display: inline-block; border-right:1px solid white;}
+.col-29:last-child { bor-right: none; }
+.col-29 h3{font-weight:800;font-size: 30px;}
+.col-29 p{font-size:22px;}
+</style>
+<!-- <div class="container">
+    <img class="super-size" src="https://static-assets-prod.epicgames.com/fortnite/static/webpack/57d5bc6799f2bb082b721935dc55ed96.jpg">
+    <div class="news">
+        <div class="max-width">
+            <div class="col-50">
+                <h1 class="whiteText">Battle Royale</h1>
+                <p class="whiteText">Now with SQUADS! Grab three friends and hop into the action. <br/><br/>Remember - Squads are here! Teaming in solo play is still unfair to others and is a bannable offense.</p>
+            </div>
+        </div>
+        <div class="col-29">
+            <img class="whiteBg max-width" src="https://cdn2.unrealengine.com/Fortnite%2FMOTD_Rocket-Launcher-256x256-2eb13961fc8136672f48ee7e64d4d37742741ae0.png">
+            <h3>High Explosives - Limited Time Mode</h3>
+            <p>Squad vs Squad combat packed with explosive weapons and rocket riding. Available Dec. 28 to Jan. 2.</p>
+        </div>
+        <div class="col-29">
+            <img class="whiteBg max-width" src="https://cdn2.unrealengine.com/Fortnite%2FMOTD_Silenced-Pistol-256x256-c961c63031add6061f0dcb0e25f9273f403ab10e.png">
+            <h3>Silenced Pistol (Coming Soon)</h3>
+            <p>Pairs perfectly with the Bush. Your enemies won’t see or hear you coming. Live next week.</p>
+        </div>
+        <div class="col-29">
+            <img class="whiteBg max-width" src="https://images-ext-1.discordapp.net/external/UKYFgCFrk2kHbhzRJR4o46SIFjCKA97v06x9avDAJkQ/https/cdn2.unrealengine.com/Fortnite%252FMODT-SMG-centered-256x256-089a9b5543e9c0dd81c8ae7532b2474340526fa2.png">
+            <h3>Sneaky Silencers LTM (Coming Soon)</h3>
+            <p>Utilize only the sneakiest weapons and stealth tactics to take home the win. Be the bush. Available January 5 - 8.</p>
+        </div>
+    </div>
+</div> -->
+<div class="relative">
+                <img class="map" src="http://www.fortnitechests.info/assets/images/web/map.jpg">
+                <img style="right: -87px" class="scheenshot absolute" src="http://www.fortnitechests.info/assets/images/chests/${lng}_${lat}.png">
+                 <img style="right: -87px" class="scheenshot absolute" src="http://www.fortnitechests.info/assets/images/chests/454_643.png">
+            </div>

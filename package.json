@@ -17,7 +17,8 @@
   "dependencies": {
     "discord.js": "^11.2.1",
     "fortnite-api": "^2.1.6",
-    "randomcolor": "^0.5.3"
+    "randomcolor": "^0.5.3",
+    "webshot": "^0.18.0"
   },
   "devDependencies": {}
 }

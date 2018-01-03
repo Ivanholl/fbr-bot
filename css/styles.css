@@ -1,7 +1,7 @@
-body {
-    background: url('./pics/background-purple-smaller.jpg') no-repeat;
-    background-size: 150% auto;
-}
-.dark-blue {
-    background-color: rgba(31, 53, 87, 1);
-}
+*{box-sizing: border-box;}
+.white {color: white;}'+'.col-4{width:33.3%; padding:0 10px; display: inline-block; float:left;}
+.container{width:1024px;position:relative;}
+.max-size{width:100%;height:100%;}
+.max-width{width:100%;}
+.news{text-align: center;position: absolute;top: -10px;}
+.col-4{width:33.3%; padding:0 10px; display: inline-block; float:left;}

@@ -1,14 +1,16 @@
 const Discord = require("discord.js");
-const client = new Discord.Client();
-const config = require('./config.json');
-const emptySpace ="ᅠ";//empty space
-const randomColor = require('randomcolor');
-const imageBuilder = require('./imageBuilder.js');
-const allRanks = config.allRanks;
-
 const Fortnite = require('./node_modules/fortnite-api');
+
+const config = require('./config.json');
+// const randomColor = require('randomcolor');
+const ImageBuilder = require('./imageBuilder.js');
+const allRanks = config.allRanks;
+// const request = require("request-promise");
+
+const client = new Discord.Client();
 let fortniteAPI = new Fortnite([config.api.acc, config.api.pass, config.api.token1, config.api.token2]);
 
+var emptySpace = "ᅠ"; //empty space
 var thisGuild,
     auhor, //message.author.id;
     targetSearch,
@@ -19,11 +21,11 @@ var thisGuild,
 
 client.on("ready", () => {
     console.log('Connected to Discord');
-    client.user.setGame('!helpstats');
+    client.user.setGame('!help');
     // client.user.setAvatar('http://icons.veryicon.com/ico/Movie%20%26%20TV/Futurama%20Vol.%204%20-%20The%20Robots/Calculon.ico')
 
     fortniteAPI.login()
-    .then((stats) => {
+        .then((stats) => {
             console.log("logged in Fortnite");
         })
         .catch((err) => {
@@ -34,47 +36,55 @@ client.on("ready", () => {
 client.on("message", (message) => {
     if (!message.content.startsWith(config.prefix) || message.author.bot) return;
 
-    if (message.content.startsWith(config.prefix)) {
-
-        init(message);
-        console.log("Searched by " + auhor.tag + "|nick: " + nick + " |target: " + targetSearch);
-        // message.channel.send('спряна').catch(console.error);
-
-        switch(baseCommand) {
-            case 'helpstats':
-                message.channel.send('!stats - връща вашите статовe\n!stats some_name - връща статовете на някой\n!count - показва колко хора има в сървъра и по колко са от ранк\n!rankme - проверява вашето K/D и ви слага ранк\n!news - дава новините за Fortnite\n!status - показва дали са Online server-ите за Fortnite\n!drop - избира ви случайно място да паднете').catch(console.error);
+    init(message);
+    // message.channel.send('спряна').catch(console.error);
+    switch (baseCommand) {
+        case 'help':
+            message.channel.send('!stats - връща вашите статовe\n!stats some_name - връща статовете на някой\n!count - показва колко хора има в сървъра и по колко са от ранк\n!rankme - проверява вашето K/D и ви слага ранк\n!news - дава новините за Fortnite\n!status - показва дали са Online server-ите за Fortnite\n!drop - избира ви случайно място да паднете').catch(console.error);
             break;
-            case 'stats':
-                getStats(false);
+        case 'stats':
+            getStats(false);
             break;
-            case 'count':
-                countMembers();
+        case 'count':
+            countMembers();
             break;
-            case 'rankme':
-                getStats(true);
+        case 'rankme':
+            if (targetSearch != nick) {
+                message.channel.send('Само себе си може да цъкаш. Ако някой не е с правилен ранк кажи на Хората с Правата').catch(console.error);
+                targetSearch = nick
+            };
+            getStats(true);
             break;
-            case 'news':
-                lang = targetSearch;
-                sendNews(lang)
+        case 'rankall':
+            if (message.member.roles.has(allRanks.admins)) {
+                message.channel.send('еее админче').catch(console.error);
+                targetSearch = nick
+            };
+            getStats(true);
             break;
-            case 'status':
-                getServerStatus();
+        case 'news':
+            sendNews(targetSearch); // targetSearch is Language here
             break;
-            case 'drop':
-                message.channel.send(dropMe()).catch(console.error);
+        case 'status':
+            getServerStatus();
             break;
-            case 'test':
+        case 'drop':
+            var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
+            imageBuilder.buildMap().then((image) => {
+                    var map = new Discord.Attachment(image, 'map.png');
+                    message.channel.send(map).catch(console.error);
+            });
             break;
             // default: //no because other bots are confusing this one
-                // message.channel.send('"!stats" - to check your stats \n"!stats some_name" - to check someone elses stats').catch(console.error);
-        }
+            // message.channel.send('"!stats" - to check your stats \n"!stats some_name" - to check someone elses stats').catch(console.error);
     }
+    message.channel.stopTyping();
 });
 
 client.login(config.token);
 
 
-function init(input){
+function init(input) {
     message = input;
     thisGuild = message.guild
     auhor = message.author
@@ -87,20 +97,25 @@ function init(input){
     }
     nick = auhor.lastMessage.member.nickname ? auhor.lastMessage.member.nickname : auhor.username;
     targetSearch = searchedName != undefined ? searchedName : nick; // who are you checking
-    intColor = Math.floor(Math.random()*16777215);
+    intColor = Math.floor(Math.random() * 16777215);
+    console.log("Searched by " + auhor.tag + "|nick: " + nick + " |target: " + targetSearch);
+
+    message.channel.startTyping();
 }
-function countMembers(){
+
+function countMembers() {
     message.channel.send(
         "```md\n[Total users in server:](" + thisGuild.memberCount + ")" +
-        "\n" + pad(allRanks.rank0.name + ": ", 11)  + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank0.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank0.id).members.size + " users." +
-        "\n" + pad(allRanks.rank1.name + ": ", 11)  + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank1.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank1.id).members.size + " users." +
-        "\n" + pad(allRanks.rank2.name + ": ", 11)  + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank2.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank2.id).members.size + " users." +
-        "\n" + pad(allRanks.rank3.name + ": ", 11)  + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank3.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank3.id).members.size + " users." +
-        "\n" + pad(allRanks.rank4.name + ": ", 11)  + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank4.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank4.id).members.size + " users." +
+        "\n" + pad(allRanks.rank0.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank0.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank0.id).members.size + " users." +
+        "\n" + pad(allRanks.rank1.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank1.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank1.id).members.size + " users." +
+        "\n" + pad(allRanks.rank2.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank2.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank2.id).members.size + " users." +
+        "\n" + pad(allRanks.rank3.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank3.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank3.id).members.size + " users." +
+        "\n" + pad(allRanks.rank4.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank4.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank4.id).members.size + " users." +
         "\n```"
     ).catch(console.error);
 }
-function getStats(forRank){
+
+function getStats(forRank) {
     fortniteAPI.getStatsBR(targetSearch, 'pc')
         .then((stats) => {
             if (forRank) {
@@ -112,9 +127,10 @@ function getStats(forRank){
         .catch((err) => {
             console.log(err);
             message.channel.send(err).catch(console.error);
-    });
+        });
 }
-function getServerStatus(){
+
+function getServerStatus() {
     fortniteAPI.checkFortniteStatus()
         .then((serverStatus) => {
             if (serverStatus) {
@@ -128,7 +144,8 @@ function getServerStatus(){
             message.channel.send(err).catch(console.error)
         });
 }
-function rankPlayer(stats){
+
+function rankPlayer(stats) {
     let kd = Math.max(stats.group.solo['k/d'], stats.group.duo['k/d'], stats.group.squad['k/d']);
 
     switch (true) {
@@ -154,7 +171,7 @@ function rankPlayer(stats){
 }
 
 function setRole(role, nextRole, kd) {
-    if(!message.member.roles.has(role)) {
+    if (!message.member.roles.has(role)) {
         message.member.removeRole(allRanks.rank0.id);
         message.member.removeRole(allRanks.rank1.id);
         message.member.removeRole(allRanks.rank2.id);
@@ -173,11 +190,11 @@ function setRole(role, nextRole, kd) {
 }
 
 function pad(value, length) {
-    value +="";
+    value += "";
     return (value.toString().length <= length) ? pad(value + emptySpace, length) : value;
 }
 
-function fillTemplate(statsInput){
+function fillTemplate(statsInput) {
     let lifetimeStats = statsInput.lifetimeStats;
     let info = statsInput.info;
     let stats = statsInput.group;
@@ -190,10 +207,10 @@ function fillTemplate(statsInput){
         },
         color: intColor,
         url: "https://www.epicgames.com/fortnite/en-US/home",
-        title: "Games" + emptySpace + emptySpace + emptySpace + "Wins"  + emptySpace + emptySpace +  emptySpace + "Kills"  + emptySpace + emptySpace +  "K/D"  + emptySpace + emptySpace + emptySpace + "Time Played\n" + emptySpace +
-              emptySpace +  pad(lifetimeStats.matches, 7) + " " + pad(lifetimeStats.wins, 5) + pad(lifetimeStats.kills, 5) + pad(lifetimeStats['k/d'], 6) + pad(lifetimeStats.timePlayed, 9) + emptySpace,
+        title: "Games" + emptySpace + emptySpace + emptySpace + "Wins" + emptySpace + emptySpace + emptySpace + "Kills" + emptySpace + emptySpace + "K/D" + emptySpace + emptySpace + emptySpace + "Time Played\n" + emptySpace +
+            emptySpace + pad(lifetimeStats.matches, 7) + " " + pad(lifetimeStats.wins, 5) + pad(lifetimeStats.kills, 5) + pad(lifetimeStats['k/d'], 6) + pad(lifetimeStats.timePlayed, 9) + emptySpace,
         description: emptySpace + ":black_circle:``\n=============== Solo ====================``:black_circle:",
-        thumbnail:{
+        thumbnail: {
             width: "500",
             height: "500",
             url: "https://cdn.atr.cloud/monthly_2017_10/FortniteClient-Win64-Shipping_123.ico_256x256.png.9db57869789ecc4d9c5f72c5a9ba9e30.thumb.png.d8d082ccd47b246fc3773e854b1b2ead.png"
@@ -202,17 +219,17 @@ function fillTemplate(statsInput){
             name: "Wins" + emptySpace + emptySpace + "Games" + emptySpace,
             value: pad(stats.solo.wins, 5) + pad(stats.solo.matches, 5),
             inline: true
-        },{
+        }, {
             name: "Kills" + emptySpace + emptySpace + emptySpace + "K/D",
             value: pad(stats.solo.kills, 5) + pad(stats.solo['k/d'], 4),
             inline: true
-        },{
-            name: "Top 10"  + emptySpace + " Top 25" + emptySpace,
+        }, {
+            name: "Top 10" + emptySpace + " Top 25" + emptySpace,
             value: pad(stats.solo.top10, 5) + pad(stats.solo.top25, 5),
             inline: true
-        },{
-            name: "Win %"  + emptySpace + emptySpace + "Time Played",
-            value: pad(stats.solo['win%'] , 6) + pad(stats.solo.timePlayed, 9),
+        }, {
+            name: "Win %" + emptySpace + emptySpace + "Time Played",
+            value: pad(stats.solo['win%'], 6) + pad(stats.solo.timePlayed, 9),
             inline: true
         }],
     }
@@ -223,20 +240,20 @@ function fillTemplate(statsInput){
             name: "Wins" + emptySpace + emptySpace + "Games" + emptySpace,
             value: pad(stats.duo.wins, 5) + " " + pad(stats.duo.matches, 5),
             inline: true
-        },{
+        }, {
             name: "Kills" + emptySpace + emptySpace + emptySpace + "K/D",
             value: pad(stats.duo.kills, 5) + pad(stats.duo['k/d'], 4),
             inline: true
-        },{
-            name: "Top 05"  + emptySpace +  " Top 12" + emptySpace,
+        }, {
+            name: "Top 05" + emptySpace + " Top 12" + emptySpace,
             value: pad(stats.duo.top5, 5) + " " + pad(stats.duo.top12, 5),
             inline: true
-        },{
-            name: "Win %"  + emptySpace + emptySpace + "Time Played",
+        }, {
+            name: "Win %" + emptySpace + emptySpace + "Time Played",
             value: pad(stats.duo['win%'], 6) + pad(stats.duo.timePlayed, 9),
             inline: true
         }],
-        thumbnail:{
+        thumbnail: {
             width: "500",
             height: "500",
             url: "https://vignette.wikia.nocookie.net/fortnite/images/6/65/Icon_Ranged.png/revision/latest?cb=20170806023208"
@@ -247,22 +264,22 @@ function fillTemplate(statsInput){
         description: ":black_circle:`\n=============== Squad ===================:`:black_circle:",
         fields: [{
             name: "Wins" + emptySpace + emptySpace + "Games",
-            value: pad(stats.squad.wins, 5)  + pad(stats.squad.matches, 4),
+            value: pad(stats.squad.wins, 5) + pad(stats.squad.matches, 4),
             inline: true
-        },{
+        }, {
             name: "Kills" + emptySpace + emptySpace + emptySpace + "K/D",
             value: pad(stats.squad.kills, 5) + pad(stats.squad['k/d'], 6),
             inline: true
-        },{
-            name: "Top 03"  + emptySpace  +  " Top 6",
+        }, {
+            name: "Top 03" + emptySpace + " Top 6",
             value: pad(stats.squad.top3, 6) + " " + pad(stats.squad.top6, 4),
             inline: true
-        },{
-            name: "Win %"  + emptySpace + emptySpace + "Time Played",
-            value:  pad(stats.squad['win%'] , 6) + pad(stats.squad.timePlayed, 9),
+        }, {
+            name: "Win %" + emptySpace + emptySpace + "Time Played",
+            value: pad(stats.squad['win%'], 6) + pad(stats.squad.timePlayed, 9),
             inline: true
         }],
-        thumbnail:{
+        thumbnail: {
             width: "500",
             height: "500",
             url: "https://i.imgur.com/IMjozOI.png"
@@ -271,7 +288,9 @@ function fillTemplate(statsInput){
             icon_url: 'https://yt3.ggpht.com/-vOrat1emDu8/AAAAAAAAAAI/AAAAAAAAAAA/kVqAWFc_8Vo/s900-c-k-no-mo-rj-c0xffffff/photo.jpg',
             text: "!helpstats for more information"
         },
-        image: { url: "https://d1u5p3l4wpay3k.cloudfront.net/fortnite_gamepedia/8/81/Scar_schema.png" },
+        image: {
+            url: "https://d1u5p3l4wpay3k.cloudfront.net/fortnite_gamepedia/8/81/Scar_schema.png"
+        },
         timestamp: new Date()
     };
 
@@ -290,43 +309,49 @@ function fillTemplate(statsInput){
     }).catch(console.error);
 }
 
-function sendNews(lang){
+function sendNews(lang) {
     fortniteAPI.getFortniteNews(lang)
         .then((data) => {
-            let news = data.br;
-            for (var i = 0; i < news.length; i++) {
+            console.log(data);
+            imageBuilder.buildNews(data).then(function(img) {
                 message.channel.send({
-                    embed: {
-                        color: intColor,
-                        title: ":black_circle:`\n=== " + news[i].title + " ===`:black_circle:",
-                        description: news[i].body ,
-                        image:{
-                            url: news[i].image
-                        }
-                    }
+                    file: img
                 }).catch(console.error);
-            }
+            })
+            // let news = data.br;
+            // for (var i = 0; i < news.length; i++) {
+            //     message.channel.send({
+            //         embed: {
+            //             color: intColor,
+            //             title: ":black_circle:`\n=== " + news[i].title + " ===`:black_circle:",
+            //             description: news[i].body ,
+            //             image:{
+            //                 url: news[i].image
+            //             }
+            //         }
+            //     }).catch(console.error);
+            // }
         })
         .catch((err) => {
             console.log(err);
             message.channel.send(err).catch(console.error);
         });
 }
-function dropMe(){
-    var locations = ["Anarchy Acres", "Fatal Fields","Flush Factory","Greasy Grove","Lonely Lodge","Loot Lake","Moisty Mire","Pleasant Park","Retail Row","Wailing Woods"];
 
-    if (Math.random() < .5) // half the time give a location between two map locations
-    {
-        var randLoc1 = locations[Math.floor(Math.random()* locations.length)];
-        var randLoc2 = locations[Math.floor(Math.random()* locations.length)];
-        while (randLoc1 == randLoc2){
-            var randLoc2 = locations[Math.floor(Math.random()* locations.length)];
+function dropMe() {
+    var locations = ["Anarchy Acres", "Fatal Fields", "Flush Factory", "Greasy Grove", "Lonely Lodge", "Loot Lake", "Moisty Mire", "Pleasant Park", "Retail Row", "Wailing Woods"];
+
+    if (Math.random() < .005) { // half the time give a location between two map locations
+        var randLoc1 = locations[Math.floor(Math.random() * locations.length)];
+        var randLoc2 = locations[Math.floor(Math.random() * locations.length)];
+        while (randLoc1 == randLoc2) {
+            var randLoc2 = locations[Math.floor(Math.random() * locations.length)];
         }
-        return "```Скочи между ***" + randLoc1 + "*** и ***" + randLoc2 + "***```";
-    }
-    else // otherwise give map location
-    {
-        var randLoc = locations[Math.floor(Math.random()* locations.length)];
-        return "```Скочи в ***" + randLoc + "***```";
+
+        return "```Скочи между **" + randLoc1 + "** и **" + randLoc2 + "**```";
+    } else { // otherwise give map location
+        var randLoc = locations[Math.floor(Math.random() * locations.length)];
+
+        return "Скочи в **" + randLoc + "**";
     }
 }
