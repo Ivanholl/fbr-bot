@@ -50,11 +50,18 @@ class ImageBuilder {
                         '</div>';
 
             for (var i = 0; i < news.br.length; i++) {
-                html += '<div class="col-29">'  +
-                            '<img class="whiteBg max-width" src="' + news.br[i].image + '">' +
-                            '<h3>' + news.br[i].title + '</h3>' +
-                            '<p>' + news.br[i].body + '</p>' +
-                        '</div>';
+                // html += '<div class="col-29">'  +
+                //             '<img class="whiteBg max-width" src="' +  + '">' +
+                //             '<h3>' +  + '</h3>' +
+                //             '<p>' + news.br[i].body + '</p>' +
+                //         '</div>';
+                html += `
+                <div class="col-29">
+                    <img class="whiteBg max-width" src=" ${news.br[i].image}">
+                    <h3>${news.br[i].title}</h3>
+                    <p>${news.br[i].body}</p>
+                </div>
+                `
             }
 
             html +='</div></div>';
@@ -82,7 +89,9 @@ class ImageBuilder {
                 buffers.push(data)
             });
             renderStream.on('end', () => {
-                resolve(Buffer.concat(buffers));
+                var temp = Buffer.concat(buffers)
+                console.log(temp.length);
+                resolve(temp);
             });
             renderStream.on('error', (err) => {
                 console.error(err);

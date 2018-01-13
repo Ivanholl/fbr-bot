@@ -5,6 +5,7 @@ const config = require('./config.json');
 // const randomColor = require('randomcolor');
 const ImageBuilder = require('./imageBuilder.js');
 const allRanks = config.allRanks;
+const allChallenges = config.challenges;
 // const request = require("request-promise");
 
 const client = new Discord.Client();
@@ -14,10 +15,13 @@ var emptySpace = "ᅠ"; //empty space
 var thisGuild,
     auhor, //message.author.id;
     targetSearch,
+    targetMember, //for rankall
     nick,
     intColor,
     baseCommand,
-    message;
+    message,
+    rankCounter = 0,
+    membersArray;
 
 client.on("ready", () => {
     console.log('Connected to Discord');
@@ -57,16 +61,38 @@ client.on("message", (message) => {
             break;
         case 'rankall':
             if (message.member.roles.has(allRanks.admins)) {
-                message.channel.send('еее админче').catch(console.error);
-                targetSearch = nick
+                message.channel.send('само за Arelam').catch(console.error);
+                // rankCounter = 0;
+                // membersArray = thisGuild.members.array();
+                // recursiveCount(rankCounter)
             };
-            getStats(true);
             break;
         case 'news':
             sendNews(targetSearch); // targetSearch is Language here
             break;
+        case 'challenge':
+            if (!message.member.voiceChannel || message.member.voiceChannel.members.array().length == 1) {
+                var soloChallenge = Math.floor(Math.random() * allChallenges.solo.length);
+                message.channel.send('``Соло предизвикателство за: ``' + message.member + '`` е ' + allChallenges.solo[soloChallenge] + '``').catch(console.error);
+                return
+            }
+
+            if (message.member.voiceChannel.members.array().length > 1) {
+                var groupChallenge = Math.floor(Math.random() * allChallenges.group.length);
+                message.channel.send('```Групово предизвикателство: ' + allChallenges.group[groupChallenge] + '```').catch(console.error)
+
+                message.member.voiceChannel.members.forEach((member) => {
+                    var soloChallenge = Math.floor(Math.random() * allChallenges.solo.length);
+                    message.channel.send('``Соло предизвикателство за: ``' + member + '`` е ' + allChallenges.solo[soloChallenge] + '``').catch(console.error)
+                })
+            }
+            break;
         case 'status':
             getServerStatus();
+            break;
+        case 'temp':
+            var map = new Discord.Attachment({file: 'meBoy.mp4'}, 'meBoy.mp4');
+            message.channel.send(map).catch(console.error);
             break;
         case 'drop':
             var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
@@ -83,7 +109,21 @@ client.on("message", (message) => {
 
 client.login(config.token);
 
+function recursiveCount(index){
+    // console.log(membersArray[index]);
+    if (!membersArray[index]) return;
 
+    if (membersArray[index].nickname) {
+        targetSearch = membersArray[index].nickname
+        targetMember = membersArray[index];
+        getStats(true);
+    } else {
+        targetSearch = membersArray[index].user.username
+        targetMember = membersArray[index];
+        getStats(true);
+    }
+    // console.log(targetSearch);
+}
 function init(input) {
     message = input;
     thisGuild = message.guild
@@ -104,18 +144,23 @@ function init(input) {
 }
 
 function countMembers() {
+    var allWithRank = thisGuild.roles.get(allRanks.rank0.id).members.size + thisGuild.roles.get(allRanks.rank1.id).members.size + thisGuild.roles.get(allRanks.rank2.id).members.size + thisGuild.roles.get(allRanks.rank3.id).members.size + thisGuild.roles.get(allRanks.rank4.id).members.size;
     message.channel.send(
         "```md\n[Total users in server:](" + thisGuild.memberCount + ")" +
-        "\n" + pad(allRanks.rank0.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank0.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank0.id).members.size + " users." +
-        "\n" + pad(allRanks.rank1.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank1.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank1.id).members.size + " users." +
-        "\n" + pad(allRanks.rank2.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank2.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank2.id).members.size + " users." +
-        "\n" + pad(allRanks.rank3.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank3.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank3.id).members.size + " users." +
-        "\n" + pad(allRanks.rank4.name + ": ", 11) + pad((thisGuild.memberCount * thisGuild.roles.get(allRanks.rank4.id).members.size / 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank4.id).members.size + " users." +
+        "\n" + pad("Not found: ", 13) + pad(Math.floor((thisGuild.memberCount - allWithRank) / thisGuild.memberCount * 100) + "% - ", 6) + (thisGuild.memberCount - allWithRank) + " users." +
+        "\n" + pad(allRanks.rank0.name + ": ", 11) + pad(Math.floor(thisGuild.roles.get(allRanks.rank0.id).members.size / thisGuild.memberCount * 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank0.id).members.size + " users." +
+        "\n" + pad(allRanks.rank1.name + ": ", 11) + pad(Math.floor(thisGuild.roles.get(allRanks.rank1.id).members.size / thisGuild.memberCount * 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank1.id).members.size + " users." +
+        "\n" + pad(allRanks.rank2.name + ": ", 11) + pad(Math.floor(thisGuild.roles.get(allRanks.rank2.id).members.size / thisGuild.memberCount * 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank2.id).members.size + " users." +
+        "\n" + pad(allRanks.rank3.name + ": ", 11) + pad(Math.floor(thisGuild.roles.get(allRanks.rank3.id).members.size / thisGuild.memberCount * 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank3.id).members.size + " users." +
+        "\n" + pad(allRanks.rank4.name + ": ", 11) + pad(Math.floor(thisGuild.roles.get(allRanks.rank4.id).members.size / thisGuild.memberCount * 100) + "% - ", 6) + thisGuild.roles.get(allRanks.rank4.id).members.size + " users." +
         "\n```"
     ).catch(console.error);
 }
 
 function getStats(forRank) {
+    // targetSearch = encodeURIComponent(targetSearch);
+    targetSearch = encodeURI(targetSearch);
+    console.log(targetSearch);
     fortniteAPI.getStatsBR(targetSearch, 'pc')
         .then((stats) => {
             if (forRank) {
@@ -125,6 +170,11 @@ function getStats(forRank) {
             }
         })
         .catch((err) => {
+            if (rankCounter < membersArray.length) {
+                rankCounter++;
+                console.log(rankCounter);
+                recursiveCount(rankCounter)
+            }
             console.log(err);
             message.channel.send(err).catch(console.error);
         });
@@ -188,7 +238,30 @@ function setRole(role, nextRole, kd) {
         ).catch(console.error);
     }
 }
-
+// function setRole(role, nextRole, kd) {
+//     if (!targetMember.roles.has(role)) {
+//         targetMember.removeRole(allRanks.rank0.id);
+//         targetMember.removeRole(allRanks.rank1.id);
+//         targetMember.removeRole(allRanks.rank2.id);
+//         targetMember.removeRole(allRanks.rank3.id);
+//         targetMember.removeRole(allRanks.rank4.id);
+//
+//         targetMember.addRole(role);
+//         message.channel.send(targetSearch + ' changed rank ' + thisGuild.roles.get(role).name).catch(console.error);
+//         if (rankCounter < membersArray.length) {
+//             rankCounter++;
+//             console.log(rankCounter);
+//             recursiveCount(rankCounter)
+//         }
+//     } else {
+//         message.channel.send(targetSearch + ' same rank '  + thisGuild.roles.get(role).name).catch(console.error);
+//         if (rankCounter < membersArray.length) {
+//             rankCounter++;
+//             console.log(rankCounter);
+//             recursiveCount(rankCounter)
+//         }
+//     }
+// }
 function pad(value, length) {
     value += "";
     return (value.toString().length <= length) ? pad(value + emptySpace, length) : value;
@@ -201,7 +274,7 @@ function fillTemplate(statsInput) {
 
     let embedObj = {
         author: {
-            name: "All time stats: " + targetSearch
+            name: "All time stats: " + decodeURI(targetSearch)
             /*,
             icon_url: 'https://yt3.ggpht.com/-vOrat1emDu8/AAAAAAAAAAI/AAAAAAAAAAA/kVqAWFc_8Vo/s900-c-k-no-mo-rj-c0xffffff/photo.jpg'*/
         },
