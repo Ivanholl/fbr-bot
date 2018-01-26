@@ -103,5 +103,20 @@ class ImageBuilder {
             reject(err)
         })
     }
+    renderImages(){
+        var location = chestLocations.lootchests[Math.floor(Math.random() * chestLocations.lootchests.length)]
+        // var location =  { lng: 1812, lat: 1622}
+        let lng = (location.lng / 2048 * 850).toFixed(0);
+        let lat = (location.lat / 2048 * 850).toFixed(0);
+        var html = `<div class="container max-size">
+                        <img class="map" src="http://www.fortnitechests.info/assets/images/web/map.jpg">
+                        <img style="right: -117px" class="scheenshot absolute" src="http://www.fortnitechests.info/assets/images/chests/${lng}_${lat}.png">
+                        <img style="top: ${850 - lat * 1}px;left: ${lng}px;" class="marker absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Red_x.svg/1024px-Red_x.svg.png">
+                    </div>`;
+
+        webshot(html, 'google.png', this.options, function(err) {
+            // screenshot now saved to google.png
+        });
+    }
 }
 module.exports = ImageBuilder;

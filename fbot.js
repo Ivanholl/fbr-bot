@@ -59,12 +59,28 @@ client.on("message", (message) => {
             };
             getStats(true);
             break;
-        case 'rankall':
-            if (message.member.roles.has(allRanks.admins)) {
+        case 'test':
+            if (!message.member.roles.has(allRanks.admins)) {
                 message.channel.send('само за Arelam').catch(console.error);
-                // rankCounter = 0;
-                // membersArray = thisGuild.members.array();
-                // recursiveCount(rankCounter)
+                //
+            } else {
+                rankCounter = 0;
+               console.log(thisGuild.roles);
+                   // membersArray = thisGuild.members.array();
+               // recursiveCount(rankCounter)
+
+               var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
+               imageBuilder.renderImages()
+               // .then((image) => {
+               //         var map = new Discord.Attachment(image, 'map.png');
+               //         message.channel.send(map).catch(console.error);
+               // });
+                // membersArray = thisGuild.members.forEach((member) => {
+                //     // console.log(member);
+                //     console.log(member.user.username);
+                //     member.addRole(allRanks.approved)
+                // });
+
             };
             break;
         case 'news':
