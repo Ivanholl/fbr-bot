@@ -7,6 +7,7 @@ const ImageBuilder = require('./imageBuilder.js');
 const allRanks = config.allRanks;
 const allChallenges = config.challenges;
 // const request = require("request-promise");
+const mongoCtrl = require('./mongoCtrl.js');
 
 const client = new Discord.Client();
 let fortniteAPI = new Fortnite([config.api.acc, config.api.pass, config.api.token1, config.api.token2]);
@@ -33,6 +34,7 @@ client.on("ready", () => {
             console.log("logged in Fortnite");
         })
         .catch((err) => {
+            console.log(err);
             console.log("not logged in Fortnite");
         });
 });
@@ -44,22 +46,30 @@ client.on("message", (message) => {
     // message.channel.send('спряна').catch(console.error);
     switch (baseCommand) {
         case 'help':
+            message.channel.startTyping();
             message.channel.send('!stats - връща вашите статовe\n!stats some_name - връща статовете на някой\n!count - показва колко хора има в сървъра и по колко са от ранк\n!rankme - проверява вашето K/D и ви слага ранк\n!news - дава новините за Fortnite\n!status - показва дали са Online server-ите за Fortnite\n!drop - избира ви случайно място да паднете').catch(console.error);
             break;
         case 'stats':
-            getStats(false);
+            message.channel.startTyping();
+            getStats('');
             break;
         case 'count':
+            message.channel.startTyping();
             countMembers();
             break;
         case 'rankme':
-            if (targetSearch != nick) {
-                message.channel.send('Само себе си може да цъкаш. Ако някой не е с правилен ранк кажи на Хората с Правата').catch(console.error);
-                targetSearch = nick
-            };
-            getStats(true);
+            // message.channel.startTyping();
+            //
+            // if (targetSearch != nick) {
+            //     message.channel.send('Само себе си може да цъкаш. Ако някой не е с правилен ранк кажи на Хората с Правата').catch(console.error);
+            //     targetSearch = nick
+            // };
+            // getStats('forRank');
+                message.channel.send('Спряна команда щото прекалявате!').catch(console.error);
             break;
         case 'test':
+            message.channel.startTyping();
+
             if (!message.member.roles.has(allRanks.admins)) {
                 message.channel.send('само за Arelam').catch(console.error);
                 //
@@ -84,9 +94,15 @@ client.on("message", (message) => {
             };
             break;
         case 'news':
+            message.channel.startTyping();
             sendNews(targetSearch); // targetSearch is Language here
             break;
+        case 'register':
+            message.channel.startTyping();
+            getStats('tournament')
+            break;
         case 'challenge':
+            message.channel.startTyping();
             if (!message.member.voiceChannel || message.member.voiceChannel.members.array().length == 1) {
                 var soloChallenge = Math.floor(Math.random() * allChallenges.solo.length);
                 message.channel.send('``Соло предизвикателство за: ``' + message.member + '`` е ' + allChallenges.solo[soloChallenge] + '``').catch(console.error);
@@ -104,13 +120,14 @@ client.on("message", (message) => {
             }
             break;
         case 'status':
+            message.channel.startTyping();
             getServerStatus();
             break;
         case 'temp':
-            var map = new Discord.Attachment({file: 'meBoy.mp4'}, 'meBoy.mp4');
-            message.channel.send(map).catch(console.error);
+
             break;
         case 'drop':
+            message.channel.startTyping();
             var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
             imageBuilder.buildMap().then((image) => {
                     var map = new Discord.Attachment(image, 'map.png');
@@ -132,14 +149,14 @@ function recursiveCount(index){
     if (membersArray[index].nickname) {
         targetSearch = membersArray[index].nickname
         targetMember = membersArray[index];
-        getStats(true);
+        getStats('forRank');
     } else {
         targetSearch = membersArray[index].user.username
         targetMember = membersArray[index];
-        getStats(true);
+        getStats('forRank');
     }
     // console.log(targetSearch);
-}
+}https://discord.gg/n2VRFk
 function init(input) {
     message = input;
     thisGuild = message.guild
@@ -154,9 +171,9 @@ function init(input) {
     nick = auhor.lastMessage.member.nickname ? auhor.lastMessage.member.nickname : auhor.username;
     targetSearch = searchedName != undefined ? searchedName : nick; // who are you checking
     intColor = Math.floor(Math.random() * 16777215);
+    targetSearch = targetSearch.replace('⚡','').trim()
     console.log("Searched by " + auhor.tag + "|nick: " + nick + " |target: " + targetSearch);
 
-    message.channel.startTyping();
 }
 
 function countMembers() {
@@ -173,29 +190,45 @@ function countMembers() {
     ).catch(console.error);
 }
 
-function getStats(forRank) {
+function getStats(usage) {
     // targetSearch = encodeURIComponent(targetSearch);
     targetSearch = encodeURI(targetSearch);
     console.log(targetSearch);
     fortniteAPI.getStatsBR(targetSearch, 'pc')
         .then((stats) => {
-            if (forRank) {
+            if (usage == 'forRank') {
                 rankPlayer(stats);
+            } else if(usage == 'tournament'){
+                registerPlayer(stats);
             } else {
                 fillTemplate(stats);
             }
         })
         .catch((err) => {
-            if (rankCounter < membersArray.length) {
-                rankCounter++;
-                console.log(rankCounter);
-                recursiveCount(rankCounter)
-            }
+            // if (rankCounter < membersArray.length) {
+            //     rankCounter++;
+            //     console.log(rankCounter);
+            //     recursiveCount(rankCounter)
+            // }
             console.log(err);
             message.channel.send(err).catch(console.error);
         });
 }
+function registerPlayer (stats){
+    var player = {
+        name: stats.info.username,
+        initialKills: stats.lifetimeStats.kills,
+        currentKills: 0
+    }
+    var status = mongoCtrl.registerPlayer(player)
+    console.log(status);
 
+    // message.channel.send(status);
+}
+function getTournament(){
+    var allPlayers = mongoCtrl.getPlayers();
+    console.log(allPlayers);
+}
 function getServerStatus() {
     fortniteAPI.checkFortniteStatus()
         .then((serverStatus) => {

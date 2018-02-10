@@ -6,6 +6,7 @@ class ImageBuilder {
     constructor(siteType, windowSize, cookies) {
         this.options = {
             siteType: siteType || 'html',
+            // siteType: siteType || 'file',
             windowSize: windowSize || {width: 1024, height: 768},
             cookies: cookies || [],
             customCSS: `
@@ -82,15 +83,17 @@ class ImageBuilder {
                             <img style="right: -117px" class="scheenshot absolute" src="http://www.fortnitechests.info/assets/images/chests/${lng}_${lat}.png">
                             <img style="top: ${850 - lat * 1}px;left: ${lng}px;" class="marker absolute" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Red_x.svg/1024px-Red_x.svg.png">
                         </div>`;
+            // var html = 'fbot.html'
             var buffers = [];
             var renderStream = webshot(html, this.options);
 
             renderStream.on('data', (data) => {
+
                 buffers.push(data)
             });
             renderStream.on('end', () => {
+                // console.log(data);
                 var temp = Buffer.concat(buffers)
-                console.log(temp.length);
                 resolve(temp);
             });
             renderStream.on('error', (err) => {
