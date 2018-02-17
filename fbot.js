@@ -34,7 +34,10 @@ client.on("ready", () => {
             console.log("logged in Fortnite");
         })
         .catch((err) => {
+
             console.log(err);
+
+
             console.log("not logged in Fortnite");
         });
 });
@@ -47,7 +50,7 @@ client.on("message", (message) => {
     switch (baseCommand) {
         case 'help':
             message.channel.startTyping();
-            message.channel.send('!stats - връща вашите статовe\n!stats some_name - връща статовете на някой\n!count - показва колко хора има в сървъра и по колко са от ранк\n!rankme - проверява вашето K/D и ви слага ранк\n!news - дава новините за Fortnite\n!status - показва дали са Online server-ите за Fortnite\n!drop - избира ви случайно място да паднете').catch(console.error);
+            message.channel.send('!stats - връща вашите статовe\n!stats some_name - връща статовете на някой\n!count - показва колко хора има в сървъра и по колко са от ранк\n!rankme - проверява вашето K/D и ви слага ранк\n!rolldice - връща случайно число между 0 и 100\n!status - показва дали са Online server-ите за Fortnite\n!drop - избира ви случайно място да паднете').catch(console.error);
             break;
         case 'stats':
             message.channel.startTyping();
@@ -58,14 +61,14 @@ client.on("message", (message) => {
             countMembers();
             break;
         case 'rankme':
-            // message.channel.startTyping();
-            //
-            // if (targetSearch != nick) {
-            //     message.channel.send('Само себе си може да цъкаш. Ако някой не е с правилен ранк кажи на Хората с Правата').catch(console.error);
-            //     targetSearch = nick
-            // };
-            // getStats('forRank');
-                message.channel.send('Спряна команда щото прекалявате!').catch(console.error);
+            message.channel.startTyping();
+
+            if (targetSearch != nick) {
+                message.channel.send('Само себе си може да цъкаш. Ако някой не е с правилен ранк кажи на Хората с Правата').catch(console.error);
+                targetSearch = nick
+            };
+            getStats('forRank');
+            // message.channel.send('Спряна команда щото прекалявате!').catch(console.error);
             break;
         case 'test':
             message.channel.startTyping();
@@ -75,16 +78,16 @@ client.on("message", (message) => {
                 //
             } else {
                 rankCounter = 0;
-               console.log(thisGuild.roles);
-                   // membersArray = thisGuild.members.array();
-               // recursiveCount(rankCounter)
+                console.log(thisGuild.roles);
+                membersArray = thisGuild.members.array();
+                // recursiveCount(rankCounter)
 
-               var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
-               imageBuilder.renderImages()
-               // .then((image) => {
-               //         var map = new Discord.Attachment(image, 'map.png');
-               //         message.channel.send(map).catch(console.error);
-               // });
+                // var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
+                // imageBuilder.renderImages()
+                // .then((image) => {
+                //         var map = new Discord.Attachment(image, 'map.png');
+                //         message.channel.send(map).catch(console.error);
+                // });
                 // membersArray = thisGuild.members.forEach((member) => {
                 //     // console.log(member);
                 //     console.log(member.user.username);
@@ -97,6 +100,9 @@ client.on("message", (message) => {
             message.channel.startTyping();
             sendNews(targetSearch); // targetSearch is Language here
             break;
+        case 'rolldice':
+            var number = Math.floor(Math.random() * 100) + 1
+            message.channel.send(message.member + " " + number).catch(console.error);
         case 'register':
             message.channel.startTyping();
             getStats('tournament')
@@ -128,10 +134,13 @@ client.on("message", (message) => {
             break;
         case 'drop':
             message.channel.startTyping();
-            var imageBuilder = new ImageBuilder('html', {width: 2130, height: 850});
+            var imageBuilder = new ImageBuilder('html', {
+                width: 2130,
+                height: 850
+            });
             imageBuilder.buildMap().then((image) => {
-                    var map = new Discord.Attachment(image, 'map.png');
-                    message.channel.send(map).catch(console.error);
+                var map = new Discord.Attachment(image, 'map.png');
+                message.channel.send(map).catch(console.error);
             });
             break;
             // default: //no because other bots are confusing this one
@@ -142,7 +151,7 @@ client.on("message", (message) => {
 
 client.login(config.token);
 
-function recursiveCount(index){
+function recursiveCount(index) {
     // console.log(membersArray[index]);
     if (!membersArray[index]) return;
 
@@ -156,7 +165,8 @@ function recursiveCount(index){
         getStats('forRank');
     }
     // console.log(targetSearch);
-}https://discord.gg/n2VRFk
+}
+// https://discord.gg/n2VRFk
 function init(input) {
     message = input;
     thisGuild = message.guild
@@ -171,7 +181,7 @@ function init(input) {
     nick = auhor.lastMessage.member.nickname ? auhor.lastMessage.member.nickname : auhor.username;
     targetSearch = searchedName != undefined ? searchedName : nick; // who are you checking
     intColor = Math.floor(Math.random() * 16777215);
-    targetSearch = targetSearch.replace('⚡','').trim()
+    targetSearch = targetSearch.replace('⚡', '').trim()
     console.log("Searched by " + auhor.tag + "|nick: " + nick + " |target: " + targetSearch);
 
 }
@@ -198,23 +208,24 @@ function getStats(usage) {
         .then((stats) => {
             if (usage == 'forRank') {
                 rankPlayer(stats);
-            } else if(usage == 'tournament'){
+            } else if (usage == 'tournament') {
                 registerPlayer(stats);
             } else {
                 fillTemplate(stats);
             }
         })
         .catch((err) => {
-            // if (rankCounter < membersArray.length) {
-            //     rankCounter++;
-            //     console.log(rankCounter);
-            //     recursiveCount(rankCounter)
-            // }
+            if (membersArray && rankCounter < membersArray.length) {
+                rankCounter++;
+                console.log(rankCounter);
+                recursiveCount(rankCounter)
+            }
             console.log(err);
             message.channel.send(err).catch(console.error);
         });
 }
-function registerPlayer (stats){
+
+function registerPlayer(stats) {
     var player = {
         name: stats.info.username,
         initialKills: stats.lifetimeStats.kills,
@@ -225,10 +236,12 @@ function registerPlayer (stats){
 
     // message.channel.send(status);
 }
-function getTournament(){
+
+function getTournament() {
     var allPlayers = mongoCtrl.getPlayers();
     console.log(allPlayers);
 }
+
 function getServerStatus() {
     fortniteAPI.checkFortniteStatus()
         .then((serverStatus) => {
@@ -267,6 +280,7 @@ function rankPlayer(stats) {
         default:
             setRole(allRanks.rank0.id, allRanks.rank0.id);
     }
+
 }
 
 function setRole(role, nextRole, kd) {
@@ -287,6 +301,7 @@ function setRole(role, nextRole, kd) {
         ).catch(console.error);
     }
 }
+
 // function setRole(role, nextRole, kd) {
 //     if (!targetMember.roles.has(role)) {
 //         targetMember.removeRole(allRanks.rank0.id);

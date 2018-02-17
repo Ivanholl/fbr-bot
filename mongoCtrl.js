@@ -8,15 +8,22 @@ db.once('open', function() {
 });
 
 var playerSchema = mongoose.Schema({
-    name: { type: String, require: '{PATH} is required', unique: true },
-    initialKills: { type: Number, require: '{PATH} is required' },    
+    name: {
+        type: String,
+        require: '{PATH} is required',
+        unique: true
+    },
+    initialKills: {
+        type: Number,
+        require: '{PATH} is required'
+    },
     currentKills: Number
 });
 var Player = mongoose.model('Player', playerSchema);
 
-function registerPlayer(player){
+function registerPlayer(player) {
     var newPlayer = new Player(player);
-    newPlayer.save(function (err, newPlayer) {
+    newPlayer.save(function(err, newPlayer) {
         if (err) {
             console.error(err);
             return false;
@@ -27,9 +34,9 @@ function registerPlayer(player){
     });
 }
 
-function getPlayers(){
+function getPlayers() {
     return new Promise((resolve, reject) => {
-        Player.find({},function(res){
+        Player.find({}, function(res) {
             if (res) {
                 console.log(res);
                 resolve(res)
@@ -42,6 +49,6 @@ function getPlayers(){
 }
 
 module.exports = {
-    registerPlayer : registerPlayer,
-    getPlayers : getPlayers
+    registerPlayer: registerPlayer,
+    getPlayers: getPlayers
 }
