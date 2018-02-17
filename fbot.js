@@ -1,13 +1,14 @@
 const Discord = require("discord.js");
-const Fortnite = require('./node_modules/fortnite-api');
 
+const Fortnite = require('./node_modules/fortnite-api');
 const config = require('./config.json');
-// const randomColor = require('randomcolor');
-const ImageBuilder = require('./imageBuilder.js');
+const ImageBuilder = require('./Image_Builder/imageBuilder.js');
+
 const allRanks = config.allRanks;
 const allChallenges = config.challenges;
 // const request = require("request-promise");
-const mongoCtrl = require('./mongoCtrl.js');
+// const mongoCtrl = require('./mongoCtrl.js');
+// const siteServer = require('./express.js');
 
 const client = new Discord.Client();
 let fortniteAPI = new Fortnite([config.api.acc, config.api.pass, config.api.token1, config.api.token2]);
@@ -129,8 +130,20 @@ client.on("message", (message) => {
             message.channel.startTyping();
             getServerStatus();
             break;
-        case 'temp':
-
+        case 'pve':
+            fortniteAPI.getStatsPVE(targetSearch)
+                .then((stats) => {
+                    console.log(typeof stats.profile.items);
+                    for (key in stats.profile.items) {
+                        console.log(stats.profile.items[key]);
+                    }
+                    // console.log(stats.profile.stats.attributes.gameplay_stats);
+                    message.channel.send(`RVN: ${stats.profile.rvn} \n WipeNumber: ${stats.profile.wipeNumber} \n CommandRevision: ${stats.profile.commandRevision}`).catch(console.error)
+                    return
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
             break;
         case 'drop':
             message.channel.startTyping();

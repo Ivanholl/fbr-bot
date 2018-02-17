@@ -1,7 +1,7 @@
 const webshot = require('webshot');
 
-const fbot = require('./fbot.js');
-const chestLocations = require('./templates/chests.json');
+const fbot = require('../fbot.js');
+const chestLocations = require('../templates/chests.json');
 class ImageBuilder {
     constructor(siteType, windowSize, cookies) {
         this.options = {
