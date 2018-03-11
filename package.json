@@ -15,12 +15,8 @@
   "author": "Arelam",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.2.1",
-    "express": "^4.16.2",
-    "fortnite-api": "^2.6.1",
-    "localtunnel": "^1.8.3",
-    "mongoose": "^5.0.1",
-    "webshot": "^0.18.0"
+    "discord.js": "^11.3.2",
+    "fortnite-api": "^2.6.1"
   },
   "devDependencies": {}
 }
