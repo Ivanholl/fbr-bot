@@ -42,12 +42,13 @@ class Commander {
     }
 
     pvpStats(){
-        console.log(this.targetSearch);
         requester.pvpStats(this.targetSearch).then(stats => {
+            // var stats = require('../old/statsMockUp.js');
             var embedObj = discordTemplates.fillStatsTemplate(stats, this.targetSearch);
             this.sendMessage({ embed: embedObj.embedObj1 })
             this.sendMessage({ embed: embedObj.embedObj2 })
             this.sendMessage({ embed: embedObj.embedObj3 })
+            this.sendMessage({ embed: embedObj.embedObj4 })
         }).catch(err => {
             console.log(err);
             this.sendMessage(err)
@@ -58,7 +59,7 @@ class Commander {
         requester.serverStatus().then(serverStatus =>{
             let status = ""
             serverStatus ? status = "Online" : status = "Offline";
-            this.sendMessage('```Fortnite Servers are ' + status + '```').catch(console.error)
+            this.sendMessage('```Fortnite Servers are ' + status + '```')
         }).catch(err => {
             console.log(err);
             this.sendMessage(err)
@@ -152,9 +153,9 @@ class Commander {
         }
     }
     challenge(){
-        if (this.member.voiceChannel.members.array().length > 1) {
+        if (this.member.voiceChannel && this.member.voiceChannel.members.array().length > 1) {
             var groupChallenge = Math.floor(Math.random() * allChallenges.group.length);
-            this.sendMessage(members + '``Групово предизвикателство: ' + allChallenges.group[groupChallenge] + '``')
+            this.sendMessage('```Групово предизвикателство: ' + allChallenges.group[groupChallenge] + '```')
 
             this.member.voiceChannel.members.forEach((member) => {
                 var soloChallenge = Math.floor(Math.random() * allChallenges.solo.length);

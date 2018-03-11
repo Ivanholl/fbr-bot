@@ -16,19 +16,34 @@ class Helpers {
     }
 
     help(){
-        return `
-!stats     - връща вашите статовe
-!stats some_name - връща статовете на някой
-!platform pc/xbox/ps4 -ви добавя съответната роля за да се намирате
-!count     - показва колко хора има в сървъра и по колко са от ранк
-!rankme    - проверява вашето K/D и ви слага ранк
-!rolldice  - връща случайно число между 0 и 100
-!rolldice <число>- връща случайно число между 0 и числото
-!status    - показва дали са Online server-ите за Fortnite
-!drop      - избира ви случайно място да паднете
-!challenge - дава ви предисвикателство за отбора
-!pve       - още се разработва`
+        let start = "```";
+        return `${start}md
+# Информация от Epic Games:
+!stats    - връща вашите статовe
+!stats име- връща статовете на някой
+!rankme   - проверява вашето K/D и ви слага ранк
+!status   - показва дали са Online server-ите за Fortnite
+!pve      - още се разработва
+
+# Други команди свързани с Fortnite Bulgaria:
+!count    - показва колко хора има в сървъра и по колко са от ранк
+!platform pc/xbox/ps4 -ви добавя съответната роля
+!rolldice - връща случайно число между 0 и 100
+!rolldice число- връща случайно число между 0 и числото
+!drop     - избира ви случайно място да паднете
+!challenge- дава ви предисвикателство за отбора
+${start}`
     }
 }
-
+/*
+stats
+count
+rankme
+rolldice
+platform
+status
+pve
+drop
+challenge
+*/
 module.exports = Helpers;
