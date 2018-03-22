@@ -35,15 +35,5 @@ class Helpers {
 ${start}`
     }
 }
-/*
-stats
-count
-rankme
-rolldice
-platform
-status
-pve
-drop
-challenge
-*/
+
 module.exports = Helpers;

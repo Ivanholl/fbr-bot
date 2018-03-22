@@ -1,6 +1,7 @@
 const Discord = require("discord.js");
 const Commander = require('./helpers/commander.js');
 const auth = require('./auth.json');
+const request = require("request-promise");
 
 let client = new Discord.Client(),
     message,
@@ -59,6 +60,13 @@ client.on("message", (message) => {
             message.channel.startTyping();
             commander.challenge()
             break;
+        // case 'sendall':
+        //     if (!message.member.roles.has("376004135230636053")) {
+        //         message.channel.send('само за admin').catch(console.error);
+        //     } else {
+        //         commander.sendAll();
+        //     }
+        //     break;
         // case 'rankall':
         //     if (!message.member.roles.has(allRanks.admins)) {
         //         message.channel.send('само за admin').catch(console.error);
@@ -69,6 +77,23 @@ client.on("message", (message) => {
         //         recursiveCount(rankCounter)
         //     }
         //     break;
+            // case 'test':
+            // request({
+            //     url: 'https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/stats/accountId/cd842a7777d641b592adaeaa22805f6b/bulk/window/alltime',
+            //     headers: {
+            //     'Authorization': "basic " + auth.token
+            //     },
+            //     'method': 'POST',
+            //     json: true
+            // })
+            // .then((data) => {
+            // console.log(data);
+            // })
+            // .catch((err) => {
+            //     console.log(err);
+            // });
+            // commander.getStatsBRFromID()
+        // break;
         // default: //no because other bots are confusing this one
               // message.channel.send('"!stats" - to check your stats \n"!stats some_name" - to check someone elses stats').catch(console.error);
     }

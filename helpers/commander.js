@@ -43,7 +43,6 @@ class Commander {
 
     pvpStats(){
         requester.pvpStats(this.targetSearch).then(stats => {
-            // var stats = require('../old/statsMockUp.js');
             var embedObj = discordTemplates.fillStatsTemplate(stats, this.targetSearch);
             this.sendMessage({ embed: embedObj.embedObj1 })
             this.sendMessage({ embed: embedObj.embedObj2 })
@@ -169,8 +168,22 @@ class Commander {
     help() {
         this.sendMessage(helpers.help())
     }
+    getStatsBRFromID(){
+        requester.getStatsBRFromID();
+        console.log();
+    }
     sendMessage(message){
         this.channel.send(message).catch(console.error);
+    }
+    sendAll(){
+        var counter = 1
+        this.Guild.members.forEach((member, index) => {
+            console.log(member);
+            member.send('```От понеделник 25/03/2018 във Fortnite Bulgaria discord-a се забранява продаване на key-ове. Писано ви е на лично "Не съм разбрал не минава като извинение!!```"').catch(console.error);
+            this.channel.send(counter + " " + member.displayName + " " + member.nickname );
+            counter++;
+        });
+
     }
 }
 module.exports = Commander;

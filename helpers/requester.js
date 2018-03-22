@@ -13,9 +13,15 @@ class Requester {
                 console.log("Not logged in Fortnite!");
             });
     }
-
+    getStatsBRFromID(targetSearch) {
+        return new Promise((resolve, reject) => {
+            fortniteAPI.getStatsBRFromID('cd842a7777d641b592adaeaa22805f6b', 'pc')
+                .then(stats => { console.log(stats)})
+                .catch(err => { console.log(stats)})
+        })
+    }
     pvpStats(targetSearch){
-        targetSearch = encodeURI(targetSearch);
+        // targetSearch = encodeURIComponent(targetSearch);
         return new Promise((resolve, reject) => {
             fortniteAPI.getStatsBR(targetSearch, 'pc')
                 .then(stats => { resolve(stats)})

@@ -25,7 +25,7 @@ class DiscordTemplates {
             url: "https://www.epicgames.com/fortnite/en-US/home",
             // title: "Games" + emptySpace + emptySpace + emptySpace + "Wins" + emptySpace + emptySpace + emptySpace + "Kills" + emptySpace + emptySpace + "K/D" + emptySpace + emptySpace + emptySpace + "Time Played\n" + emptySpace + emptySpace + pad(lifetimeStats.matches, 7) + " " + pad(lifetimeStats.wins, 5) + pad(lifetimeStats.kills, 5) + pad(lifetimeStats['k/d'], 6) + pad(lifetimeStats.timePlayed, 9) + emptySpace,
             title: pad("Games", 8) + pad("Wins", 7) + pad("Kills", 7) + pad("K/D", 6) + "Time Played\n"
-                    + emptySpace + emptySpace + pad(lifetimeStats.matches, 8) + " " + pad(lifetimeStats.wins, 5) + pad(lifetimeStats.kills, 5) + pad(lifetimeStats['k/d'], 8) + pad(lifetimeStats.timePlayed, 9),
+                    + emptySpace + emptySpace + pad(lifetimeStats.matches, 8) + " " + pad(lifetimeStats.wins, 7) + pad(lifetimeStats.kills, 6) + pad(lifetimeStats['k/d'], 8) + pad(lifetimeStats.timePlayed, 9),
             thumbnail: {
                 width: "500",
                 height: "500",
