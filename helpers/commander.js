@@ -30,15 +30,19 @@ class Commander {
             args.shift()
             this.searchedName = args.join(' ');
         }
+
         if (this.auhor.lastMessage.member && this.auhor.lastMessage.member.nickname) {
             this.nick = this.auhor.lastMessage.member.nickname;
         } else {
-            this.nick = this.auhor.username;
+
+            return
+            // this.nick = this.auhor.username;
         }
         this.targetSearch = this.searchedName != undefined ? this.searchedName : this.nick; // who are you checking
         this.targetSearch = this.targetSearch.replace('⚡', '').trim()
 
-        console.log("Searched by " + this.auhor.tag + "|nick: " + this.nick + " |target: " + this.targetSearch);
+        // console.log("Searched by " + this.auhor.tag + "|nick: " + this.nick + " |target: " + this.targetSearch);
+        console.log("Searched " + this.baseCommand + " by " + this.auhor.tag + "|nick: " + this.nick + " |target: " + this.targetSearch);
     }
 
     pvpStats(){
@@ -54,6 +58,15 @@ class Commander {
         })
     }
 
+    checkNickname(){
+        if (this.auhor.lastMessage.member && !this.auhor.lastMessage.member.nickname) {
+            this.sendMessage("Искай да ти сложат Nickaname в Сървър-а иначе не може да използвате този Bot!")
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     getServerStatus() {
         requester.serverStatus().then(serverStatus =>{
             let status = ""
@@ -67,6 +80,27 @@ class Commander {
 
     countPlayers(){
         this.sendMessage(discordTemplates.playerOfRole(allRanks, this.Guild))
+
+        // var counter = 1;
+        // var errCpunter = 1;
+        // this.Guild.members.forEach((member, index) => {
+        //     console.log(member);
+        //     var forSearch = member.nickname ? member.nickname : member.displayName;
+        //     // member.send('```От понеделник 25/03/2018 във Fortnite Bulgaria discord-a се забранява продаване на key-ове. Писано ви е на лично "Не съм разбрал не минава като извинение!!```"').catch(console.error);
+        //     // this.channel.send(counter + " " + member.displayName + " " + member.nickname );
+        //     requester.pvpStats(forSearch)
+        //     .then(stats =>{
+        //         let kd = Math.max(stats.group.solo['k/d'], stats.group.duo['k/d'], stats.group.squad['k/d']);
+        //         this.setRole(rolesManager.getRole(kd));
+        //         this.sendMessage(counter + " " + member.displayName + " " + member.nickname );
+        //         counter++;
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //         this.sendMessage("Грешен " + errCpunter + " " + err)
+        //     })
+        //
+        // });
     }
 
     getDrop() {

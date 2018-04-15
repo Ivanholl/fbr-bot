@@ -3,6 +3,9 @@ const Commander = require('./helpers/commander.js');
 const auth = require('./auth.json');
 const request = require("request-promise");
 
+const FCrawler = require('./helpers/crawler.js')
+var crawler = new FCrawler();
+
 let client = new Discord.Client(),
     message,
     rankCounter = 0,
@@ -18,6 +21,10 @@ client.on("message", (message) => {
     if (!message.content.startsWith(auth.prefix) || message.author.bot) return;
 
     let commander = new Commander(message);
+
+    if (commander.checkNickname()) {
+        return;
+    }
 
     switch (commander.baseCommand) {
         case 'help':
@@ -60,6 +67,12 @@ client.on("message", (message) => {
             message.channel.startTyping();
             commander.challenge()
             break;
+        case 'season':
+            message.channel.startTyping();
+            // commander.challenge()
+            crawler.test()
+            message.channel.send('разработва се').catch(console.error);
+            break;
         // case 'sendall':
         //     if (!message.member.roles.has("376004135230636053")) {
         //         message.channel.send('само за admin').catch(console.error);
@@ -68,13 +81,13 @@ client.on("message", (message) => {
         //     }
         //     break;
         // case 'rankall':
-        //     if (!message.member.roles.has(allRanks.admins)) {
+        //     if (!message.member.roles.has("376004135230636053")) {
         //         message.channel.send('само за admin').catch(console.error);
         //         //
         //     } else {
-        //         rankCounter = 0;
-        //         membersArray = thisGuild.members.array();
-        //         recursiveCount(rankCounter)
+        //         // rankCounter = 0;
+        //         // membersArray = thisGuild.members.array();
+        //         commander.countPlayers();
         //     }
         //     break;
             // case 'test':
@@ -97,6 +110,7 @@ client.on("message", (message) => {
         // default: //no because other bots are confusing this one
               // message.channel.send('"!stats" - to check your stats \n"!stats some_name" - to check someone elses stats').catch(console.error);
     }
+
     message.channel.stopTyping();
 });
 

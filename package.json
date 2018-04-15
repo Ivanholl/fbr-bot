@@ -16,7 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.3.2",
-    "fortnite-api": "^2.6.1"
+    "fortnite-api": "^2.6.1",
+    "node-webcrawler": "^0.8.0"
   },
   "devDependencies": {}
 }
